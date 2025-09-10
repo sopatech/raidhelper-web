@@ -76,6 +76,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=release
           build-args: |
             BUILDKIT_INLINE_CACHE=1
+          outputs: type=registry
 
       - name: Update manifests repository
         id: update_manifests

@@ -14,6 +14,12 @@ const nextConfig = {
       },
     ];
   },
+  // Build optimizations to prevent retry issues
+  experimental: {
+    outputFileTracingRoot: undefined,
+  },
+  // Disable telemetry during build
+  telemetry: false,
 };
 
 module.exports = nextConfig;
