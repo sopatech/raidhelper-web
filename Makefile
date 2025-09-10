@@ -27,11 +27,13 @@ build: ## Build for production
 	@echo "🏗️  Building for production..."
 	npm run build
 
-start: ## Start development server
-	@echo "🚀 Starting development server..."
+start: ## Start production server
+	@echo "🚀 Starting production server..."
 	npm start
 
-dev: start ## Alias for start
+dev: ## Start development server
+	@echo "🚀 Starting development server..."
+	npm run dev
 
 # Docker
 docker-build: ## Build Docker image
@@ -40,7 +42,7 @@ docker-build: ## Build Docker image
 
 docker-run: ## Run Docker container
 	@echo "🐳 Running Docker container..."
-	docker run -p 3000:80 raidhelper-web:latest
+	docker run -p 3000:3000 raidhelper-web:latest
 
 # Release
 tag-release: ## Create and push a release tag
