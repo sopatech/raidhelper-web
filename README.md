@@ -37,8 +37,8 @@ A modern React web application for managing Twitch raid animations and receiving
    
    Edit `.env.local` to match your backend configuration:
    ```env
-   REACT_APP_API_URL=http://localhost:8081
-   REACT_APP_WS_URL=ws://localhost:8082
+   NEXT_PUBLIC_API_URL=http://localhost:8081
+   NEXT_PUBLIC_WS_URL=ws://localhost:8080
    ```
 
 4. **Start the development server**
@@ -53,7 +53,7 @@ A modern React web application for managing Twitch raid animations and receiving
 Make sure these RaidHelper services are running:
 
 - **API Server** (port 8081) - Authentication and data API
-- **WebSocket Server** (port 8082) - Real-time event notifications
+- **WebSocket Server** (port 8080) - Real-time event notifications
 - **DynamoDB** - User data and session storage
 - **NATS** - Message broker for events
 
@@ -99,7 +99,7 @@ When a raid happens on your stream:
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   React App     │    │   API Server     │    │  WebSocket      │
-│  (Port 3000)    │◄──►│  (Port 8081)     │    │  (Port 8082)    │
+│  (Port 3000)    │◄──►│  (Port 8081)     │    │  (Port 8080)    │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
          │                        │                       │
          │                        ▼                       ▼
@@ -176,8 +176,8 @@ The app uses **Tailwind CSS** with:
 
 ### Environment Variables
 
-- **`REACT_APP_API_URL`** - Backend API base URL
-- **`REACT_APP_WS_URL`** - WebSocket server URL
+- **`NEXT_PUBLIC_API_URL`** - Backend API base URL
+- **`NEXT_PUBLIC_WS_URL`** - WebSocket server URL
 - **`GENERATE_SOURCEMAP`** - Enable/disable source maps
 
 ## Deployment
@@ -211,8 +211,8 @@ This creates an optimized build in the `build/` folder.
 
 Set production environment variables:
 ```env
-REACT_APP_API_URL=https://api.raidhelper.com
-REACT_APP_WS_URL=wss://ws.raidhelper.com
+NEXT_PUBLIC_API_URL=https://api.raidhelper.com
+NEXT_PUBLIC_WS_URL=wss://ws.raidhelper.com
 ```
 
 ## Troubleshooting

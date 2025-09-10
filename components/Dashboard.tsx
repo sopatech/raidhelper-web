@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { raidAPI } from '../services/api';
+import { useAuth } from '../lib/AuthContext';
 import AnimationCard from './AnimationCard';
 import RaidEventDisplay from './RaidEventDisplay';
 import ConnectionStatus from './ConnectionStatus';
@@ -19,16 +20,11 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
+  const { user } = useAuth();
   const [animations, setAnimations] = useState<Animation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'animations' | 'events'>('animations');
-  
-  // Mock user data - replace with actual user from auth context
-  const user = {
-    display_name: 'TestUser',
-    profile_image_url: 'https://via.placeholder.com/32'
-  };
+  const [activeTab, setActiveTab] = useState<'animations' | 'live' | 'settings'>('animations');
 
   useEffect(() => {
     loadAnimations();
@@ -48,12 +44,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   };
 
   const tabs = [
-    { id: 'animations', label: 'Animations', icon: 'play' },
-    { id: 'live', label: 'Live Feed', icon: 'radio' },
-    { id: 'settings', label: 'Settings', icon: 'settings' },
+    { id: 'animations' as const, label: 'Animations', icon: 'play' },
+    { id: 'live' as const, label: 'Live Feed', icon: 'radio' },
+    { id: 'settings' as const, label: 'Settings', icon: 'settings' },
   ];
 
-  const getTabIcon = (iconType) => {
+  const getTabIcon = (iconType: string) => {
     switch (iconType) {
       case 'play':
         return (
@@ -97,11 +93,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             <div className="flex items-center space-x-4">
               <ConnectionStatus />
               <div className="flex items-center space-x-2">
-                <img 
-                  src={user?.profile_image_url || 'https://via.placeholder.com/32'} 
-                  alt="Profile" 
-                  className="h-8 w-8 rounded-full"
-                />
+                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-twitch-primary to-purple-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {user?.display_name?.charAt(0) || 'U'}
+                  </span>
+                </div>
                 <span className="text-sm font-medium text-gray-700">{user?.display_name}</span>
               </div>
               <button

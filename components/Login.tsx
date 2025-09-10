@@ -6,18 +6,17 @@ interface LoginProps {
   onLogin: (token: string) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC<LoginProps> = () => {
   const [loading, setLoading] = React.useState(false);
 
   const handleLogin = async () => {
     setLoading(true);
     try {
-      // Simulate login process - replace with actual Twitch OAuth
-      const mockToken = 'mock-token-' + Date.now();
-      onLogin(mockToken);
+      // Redirect to backend Twitch OAuth endpoint
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081';
+      window.location.href = `${apiUrl}/auth/login-twitch`;
     } catch (error) {
       console.error('Login failed:', error);
-    } finally {
       setLoading(false);
     }
   };

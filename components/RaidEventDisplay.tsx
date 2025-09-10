@@ -2,15 +2,42 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { websocketManager } from '../services/websocket';
-import { raidAPI, RaidEvent, Animation } from '../services/api';
+import { raidAPI, Animation } from '../services/api';
+
+interface RaidEvent {
+  id: number;
+  type: string;
+  timestamp: Date;
+  data?: {
+    raider: string;
+    viewers: number;
+    message: string;
+    timestamp: number;
+  };
+  animationId?: string;
+  isTest?: boolean;
+  message?: string;
+}
+import { useAuth } from '../lib/AuthContext';
+
+interface RaidEventData {
+  type: string;
+  channel_id: string;
+  animation_id: string;
+  data: {
+    raider: string;
+    viewers: number;
+    message: string;
+    timestamp: number;
+  };
+}
 
 const RaidEventDisplay: React.FC = () => {
-  // Mock session token - replace with actual auth context
-  const sessionToken = 'mock-session-token';
+  const { sessionToken } = useAuth();
   const [events, setEvents] = useState<RaidEvent[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [currentAnimation, setCurrentAnimation] = useState<Animation | null>(null);
-  const eventsEndRef = useRef(null);
+  const eventsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sessionToken) return;
@@ -25,7 +52,7 @@ const RaidEventDisplay: React.FC = () => {
       addSystemEvent('Disconnected from real-time feed');
     };
 
-    const handleRaidEvent = async (data) => {
+    const handleRaidEvent = async (data: RaidEventData) => {
       console.log('Raid event received:', data);
       
       // Add the event to the list
@@ -75,7 +102,7 @@ const RaidEventDisplay: React.FC = () => {
     eventsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [events]);
 
-  const addSystemEvent = (message) => {
+  const addSystemEvent = (message: string) => {
     const systemEvent = {
       id: Date.now(),
       type: 'system',
@@ -113,7 +140,7 @@ const RaidEventDisplay: React.FC = () => {
     setEvents([]);
   };
 
-  const formatTime = (date) => {
+  const formatTime = (date: Date) => {
     return date.toLocaleTimeString();
   };
 
@@ -125,13 +152,11 @@ const RaidEventDisplay: React.FC = () => {
           <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-8 text-white text-center transform animate-bounce">
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-4xl font-bold mb-2">RAID INCOMING!</h2>
-            <p className="text-xl mb-2">{currentAnimation.data?.raider || 'Unknown Raider'}</p>
+            <p className="text-xl mb-2">Raid Incoming!</p>
             <p className="text-lg">
-              {currentAnimation.data?.viewers || 0} viewers joining!
+              Animation: {currentAnimation.name}
             </p>
-            {currentAnimation.data?.message && (
-              <p className="text-sm mt-4 opacity-90">"{currentAnimation.data.message}"</p>
-            )}
+            <p className="text-sm mt-4 opacity-90">&ldquo;{currentAnimation.description}&rdquo;</p>
           </div>
         </div>
       )}
@@ -204,7 +229,7 @@ const RaidEventDisplay: React.FC = () => {
                       <div>
                         <div className="flex items-center space-x-2 mb-1">
                           <span className="font-medium text-gray-900">
-                            {event.data.raider}
+                            {event.data?.raider}
                           </span>
                           {event.isTest && (
                             <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">
@@ -213,11 +238,11 @@ const RaidEventDisplay: React.FC = () => {
                           )}
                         </div>
                         <p className="text-sm text-gray-600 mb-1">
-                          Raided with {event.data.viewers} viewers
+                          Raided with {event.data?.viewers} viewers
                         </p>
-                        {event.data.message && (
+                        {event.data?.message && (
                           <p className="text-sm text-gray-700 italic">
-                            "{event.data.message}"
+                            &ldquo;{event.data.message}&rdquo;
                           </p>
                         )}
                         {event.animationId && (
@@ -248,7 +273,7 @@ const RaidEventDisplay: React.FC = () => {
           <li>• Real-time events appear here when raids happen on your stream</li>
           <li>• Animation previews will show automatically when raids are triggered</li>
           <li>• Use the test button to see how raid notifications will look</li>
-          <li>• Make sure you're connected to receive live events</li>
+          <li>• Make sure you&apos;re connected to receive live events</li>
         </ul>
       </div>
     </div>

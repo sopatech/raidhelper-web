@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '23'
           cache: 'npm'
 
       - name: Install dependencies
@@ -31,8 +31,11 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage --watchAll=false
 
+      - name: Run TypeScript type check
+        run: npm run type-check
+
       - name: Run linting
-        run: npm run build
+        run: npm run lint
 
   build:
     name: Build
@@ -45,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '23'
           cache: 'npm'
 
       - name: Install dependencies
@@ -69,6 +72,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.ci
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

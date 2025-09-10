@@ -14,7 +14,7 @@ class WebSocketManager {
     }
 
     this.isConnecting = true;
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8082';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
     const url = `${wsUrl}?session=${sessionId}`;
 
     console.log('Connecting to WebSocket:', url);
@@ -25,7 +25,7 @@ class WebSocketManager {
       console.log('WebSocket connected');
       this.isConnecting = false;
       this.reconnectAttempts = 0;
-      this.emit('connected');
+      this.emit('connected', {});
     };
 
     this.ws.onmessage = (event) => {

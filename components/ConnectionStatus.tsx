@@ -2,17 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { websocketManager } from '../services/websocket';
+import { useAuth } from '../lib/AuthContext';
 
 interface ConnectionStatusProps {
   detailed?: boolean;
 }
 
 const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ detailed = false }) => {
-  const [connectionState, setConnectionState] = useState<'connected' | 'disconnected' | 'connecting'>('disconnected');
-  const [lastMessage, setLastMessage] = useState<string | null>(null);
-  
-  // Mock session token - replace with actual auth context
-  const sessionToken = 'mock-session-token';
+  const { sessionToken } = useAuth();
+  const [connectionState, setConnectionState] = useState<'connected' | 'disconnected' | 'connecting' | 'error'>('disconnected');
+  const [lastMessage, setLastMessage] = useState<{ timestamp?: number; type?: string } | null>(null);
 
   useEffect(() => {
     if (!sessionToken) return;
@@ -24,7 +23,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ detailed = false })
     const handleConnected = () => setConnectionState('connected');
     const handleDisconnected = () => setConnectionState('disconnected');
     const handleError = () => setConnectionState('error');
-    const handleMessage = (data) => {
+    const handleMessage = (data: { timestamp?: number; type?: string }) => {
       setLastMessage(data);
       console.log('WebSocket message:', data);
     };
@@ -35,7 +34,12 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ detailed = false })
     websocketManager.on('message', handleMessage);
 
     // Update initial state
-    setConnectionState(websocketManager.getConnectionState());
+    const state = websocketManager.getConnectionState();
+    if (state === 'closing' || state === 'unknown') {
+      setConnectionState('disconnected');
+    } else {
+      setConnectionState(state);
+    }
 
     // Cleanup on unmount
     return () => {

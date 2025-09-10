@@ -72,10 +72,10 @@ const AnimationCard: React.FC<AnimationCardProps> = ({ animation }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 text-xs text-gray-500">
               <span className="bg-gray-100 px-2 py-1 rounded">
-                {animation.type || 'Standard'}
+                Standard
               </span>
               <span className="bg-gray-100 px-2 py-1 rounded">
-                {animation.duration || '3s'}
+                3s
               </span>
             </div>
             
@@ -142,11 +142,11 @@ const AnimationCard: React.FC<AnimationCardProps> = ({ animation }) => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="font-medium text-gray-900 mb-1">Duration</p>
-                    <p className="text-gray-600">{animation.duration || '3 seconds'}</p>
+                    <p className="text-gray-600">3 seconds</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 mb-1">Type</p>
-                    <p className="text-gray-600">{animation.type || 'Standard'}</p>
+                    <p className="text-gray-600">Standard</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 mb-1">Effects</p>
@@ -158,10 +158,10 @@ const AnimationCard: React.FC<AnimationCardProps> = ({ animation }) => {
                   </div>
                 </div>
                 
-                {preview?.description && (
+                {preview && typeof preview === 'object' && 'description' in preview && (
                   <div>
                     <p className="font-medium text-gray-900 mb-1">Description</p>
-                    <p className="text-gray-600">{preview.description}</p>
+                    <p className="text-gray-600">{(preview as { description: string }).description}</p>
                   </div>
                 )}
                 
