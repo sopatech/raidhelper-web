@@ -148,21 +148,21 @@ jobs:
             
             **Release:** [View on GitHub](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.VERSION }})
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ steps.version.outputs.VERSION }}
-        body: |
-          ## 🚀 Release ${{ steps.version.outputs.VERSION }}
-          
-          **Docker Images:**
-          - `ghcr.io/${{ github.repository }}-web:${{ steps.version.outputs.VERSION }}`
-          - `ghcr.io/${{ github.repository }}-web:latest`
-          
-          **Changes:**
-          - Updated web application to version ${{ steps.version.outputs.VERSION }}
-          - Built and pushed Docker images to GitHub Container Registry
-          - Created manifest PR for deployment
-        draft: false
-        prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## 🚀 Release ${{ steps.version.outputs.VERSION }}
+            
+            **Docker Images:**
+            - `ghcr.io/${{ github.repository }}-web:${{ steps.version.outputs.VERSION }}`
+            - `ghcr.io/${{ github.repository }}-web:latest`
+            
+            **Changes:**
+            - Updated web application to version ${{ steps.version.outputs.VERSION }}
+            - Built and pushed Docker images to GitHub Container Registry
+            - Created manifest PR for deployment
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
