@@ -1,8 +1,26 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+'use client';
 
-const Login = () => {
-  const { login, loading } = useAuth();
+import React from 'react';
+
+interface LoginProps {
+  onLogin: (token: string) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      // Simulate login process - replace with actual Twitch OAuth
+      const mockToken = 'mock-token-' + Date.now();
+      onLogin(mockToken);
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
@@ -50,7 +68,7 @@ const Login = () => {
             </div>
 
             <button
-              onClick={login}
+              onClick={handleLogin}
               disabled={loading}
               className="w-full bg-twitch-primary hover:bg-twitch-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 glow"
             >

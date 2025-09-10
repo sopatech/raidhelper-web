@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { websocketManager } from '../services/websocket';
-import { raidAPI } from '../services/api';
+'use client';
 
-const RaidEventDisplay = () => {
-  const { sessionToken } = useAuth();
-  const [events, setEvents] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [currentAnimation, setCurrentAnimation] = useState(null);
+import React, { useState, useEffect, useRef } from 'react';
+import { websocketManager } from '../services/websocket';
+import { raidAPI, RaidEvent, Animation } from '../services/api';
+
+const RaidEventDisplay: React.FC = () => {
+  // Mock session token - replace with actual auth context
+  const sessionToken = 'mock-session-token';
+  const [events, setEvents] = useState<RaidEvent[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [currentAnimation, setCurrentAnimation] = useState<Animation | null>(null);
   const eventsEndRef = useRef(null);
 
   useEffect(() => {

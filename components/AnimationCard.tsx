@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { raidAPI } from '../services/api';
+'use client';
 
-const AnimationCard = ({ animation }) => {
-  const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const [showPreview, setShowPreview] = useState(false);
+import React, { useState } from 'react';
+import { raidAPI, Animation } from '../services/api';
+
+interface AnimationCardProps {
+  animation: Animation;
+}
+
+const AnimationCard: React.FC<AnimationCardProps> = ({ animation }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   const loadPreview = async () => {
     if (preview) {

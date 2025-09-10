@@ -1,16 +1,34 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { raidAPI } from '../services/api';
 import AnimationCard from './AnimationCard';
 import RaidEventDisplay from './RaidEventDisplay';
 import ConnectionStatus from './ConnectionStatus';
 
-const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const [animations, setAnimations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('animations');
+interface Animation {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  isActive: boolean;
+}
+
+interface DashboardProps {
+  onLogout: () => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
+  const [animations, setAnimations] = useState<Animation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'animations' | 'events'>('animations');
+  
+  // Mock user data - replace with actual user from auth context
+  const user = {
+    display_name: 'TestUser',
+    profile_image_url: 'https://via.placeholder.com/32'
+  };
 
   useEffect(() => {
     loadAnimations();
@@ -87,7 +105,7 @@ const Dashboard = () => {
                 <span className="text-sm font-medium text-gray-700">{user?.display_name}</span>
               </div>
               <button
-                onClick={logout}
+                onClick={onLogout}
                 className="text-gray-500 hover:text-gray-700 text-sm font-medium"
               >
                 Logout

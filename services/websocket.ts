@@ -1,20 +1,20 @@
-class WebSocketManager {
-  constructor() {
-    this.ws = null;
-    this.listeners = new Map();
-    this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 5;
-    this.reconnectInterval = 1000;
-    this.isConnecting = false;
-  }
+type WebSocketListener = (data: any) => void;
 
-  connect(sessionId) {
+class WebSocketManager {
+  private ws: WebSocket | null = null;
+  private listeners: Map<string, WebSocketListener[]> = new Map();
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 5;
+  private reconnectInterval: number = 1000;
+  private isConnecting: boolean = false;
+
+  connect(sessionId: string): void {
     if (this.isConnecting || (this.ws && this.ws.readyState === WebSocket.OPEN)) {
       return;
     }
 
     this.isConnecting = true;
-    const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8082';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8082';
     const url = `${wsUrl}?session=${sessionId}`;
 
     console.log('Connecting to WebSocket:', url);
@@ -61,7 +61,7 @@ class WebSocketManager {
     };
   }
 
-  scheduleReconnect(sessionId) {
+  private scheduleReconnect(sessionId: string): void {
     this.reconnectAttempts++;
     const delay = this.reconnectInterval * Math.pow(2, this.reconnectAttempts - 1);
     
@@ -74,7 +74,7 @@ class WebSocketManager {
     }, delay);
   }
 
-  disconnect() {
+  disconnect(): void {
     if (this.ws) {
       this.ws.close(1000, 'User disconnect');
       this.ws = null;
@@ -83,7 +83,7 @@ class WebSocketManager {
     this.reconnectAttempts = 0;
   }
 
-  send(data) {
+  send(data: any): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(data));
     } else {
@@ -91,16 +91,16 @@ class WebSocketManager {
     }
   }
 
-  on(event, callback) {
+  on(event: string, callback: WebSocketListener): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
-    this.listeners.get(event).push(callback);
+    this.listeners.get(event)!.push(callback);
   }
 
-  off(event, callback) {
+  off(event: string, callback: WebSocketListener): void {
     if (this.listeners.has(event)) {
-      const callbacks = this.listeners.get(event);
+      const callbacks = this.listeners.get(event)!;
       const index = callbacks.indexOf(callback);
       if (index > -1) {
         callbacks.splice(index, 1);
@@ -108,9 +108,9 @@ class WebSocketManager {
     }
   }
 
-  emit(event, data) {
+  private emit(event: string, data: any): void {
     if (this.listeners.has(event)) {
-      this.listeners.get(event).forEach(callback => {
+      this.listeners.get(event)!.forEach(callback => {
         try {
           callback(data);
         } catch (error) {
@@ -120,7 +120,7 @@ class WebSocketManager {
     }
   }
 
-  getConnectionState() {
+  getConnectionState(): 'connected' | 'disconnected' | 'connecting' | 'closing' | 'unknown' {
     if (!this.ws) return 'disconnected';
     
     switch (this.ws.readyState) {

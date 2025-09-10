@@ -1,13 +1,30 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 // Create axios instance with default config
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8081',
+const api: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Types for API responses
+export interface Animation {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  isActive: boolean;
+}
+
+export interface RaidEvent {
+  id: string;
+  fromUser: string;
+  toUser: string;
+  viewers: number;
+  timestamp: string;
+}
 
 // Request interceptor to add auth headers
 api.interceptors.request.use(
@@ -38,11 +55,11 @@ api.interceptors.response.use(
 
 // Authentication API calls
 export const authAPI = {
-  loginWithTwitch: () => {
+  loginWithTwitch: (): void => {
     window.location.href = `${api.defaults.baseURL}/auth/login-twitch`;
   },
   
-  logout: async () => {
+  logout: async (): Promise<void> => {
     try {
       await api.post('/auth/logout');
     } finally {
@@ -51,31 +68,31 @@ export const authAPI = {
     }
   },
   
-  refreshSession: async () => {
-    const response = await api.post('/auth/refresh');
+  refreshSession: async (): Promise<any> => {
+    const response: AxiosResponse = await api.post('/auth/refresh');
     return response.data;
   },
   
-  getMe: async () => {
-    const response = await api.get('/users/me');
+  getMe: async (): Promise<any> => {
+    const response: AxiosResponse = await api.get('/users/me');
     return response.data;
   }
 };
 
 // Raid animation API calls
 export const raidAPI = {
-  getAnimations: async () => {
-    const response = await api.get('/raid/animations');
+  getAnimations: async (): Promise<Animation[]> => {
+    const response: AxiosResponse<Animation[]> = await api.get('/raid/animations');
     return response.data;
   },
   
-  getAnimation: async (id) => {
-    const response = await api.get(`/raid/animations/${id}`);
+  getAnimation: async (id: string): Promise<Animation> => {
+    const response: AxiosResponse<Animation> = await api.get(`/raid/animations/${id}`);
     return response.data;
   },
   
-  getAnimationPreview: async (id) => {
-    const response = await api.get(`/raid/animations/${id}/preview`);
+  getAnimationPreview: async (id: string): Promise<any> => {
+    const response: AxiosResponse = await api.get(`/raid/animations/${id}/preview`);
     return response.data;
   }
 };

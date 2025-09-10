@@ -1,11 +1,18 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { websocketManager } from '../services/websocket';
 
-const ConnectionStatus = ({ detailed = false }) => {
-  const { sessionToken } = useAuth();
-  const [connectionState, setConnectionState] = useState('disconnected');
-  const [lastMessage, setLastMessage] = useState(null);
+interface ConnectionStatusProps {
+  detailed?: boolean;
+}
+
+const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ detailed = false }) => {
+  const [connectionState, setConnectionState] = useState<'connected' | 'disconnected' | 'connecting'>('disconnected');
+  const [lastMessage, setLastMessage] = useState<string | null>(null);
+  
+  // Mock session token - replace with actual auth context
+  const sessionToken = 'mock-session-token';
 
   useEffect(() => {
     if (!sessionToken) return;
