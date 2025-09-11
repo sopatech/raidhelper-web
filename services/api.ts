@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 // Create axios instance with default config
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://api.raidhelper.local:8086',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
