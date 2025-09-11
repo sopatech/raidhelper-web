@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useApi } from '../lib/useApi';
 
 interface LoginProps {
   onLogin: (token: string) => void;
@@ -8,13 +9,17 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = () => {
   const [loading, setLoading] = React.useState(false);
+  const { auth, loading: configLoading, error: configError } = useApi();
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
+    if (!auth) {
+      console.error('API not available - configuration not loaded');
+      return;
+    }
+
     setLoading(true);
     try {
-      // Redirect to backend Twitch OAuth endpoint
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081';
-      window.location.href = `${apiUrl}/auth/login-twitch`;
+      auth.loginWithTwitch();
     } catch (error) {
       console.error('Login failed:', error);
       setLoading(false);
@@ -68,13 +73,15 @@ const Login: React.FC<LoginProps> = () => {
 
             <button
               onClick={handleLogin}
-              disabled={loading}
+              disabled={loading || configLoading || !auth}
               className="w-full bg-twitch-primary hover:bg-twitch-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 glow"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
               </svg>
-              <span>Connect with Twitch</span>
+              <span>
+                {configLoading ? 'Loading...' : configError ? 'Configuration Error' : 'Connect with Twitch'}
+              </span>
             </button>
 
             <div className="text-center">
